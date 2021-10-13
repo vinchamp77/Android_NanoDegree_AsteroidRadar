@@ -39,4 +39,16 @@ class MainViewModel : ViewModel() {
 
         _asteroids.postValue(dataList)
     }
+
+    private val _navigateToDetailFragment = MutableLiveData<Asteroid?>()
+    val navigateToDetailFragment
+        get() = _navigateToDetailFragment
+
+    fun onAsteroidItemClick(data: Asteroid) {
+        _navigateToDetailFragment.value = data
+    }
+
+    fun onDetailFragmentNavigated() {
+        _navigateToDetailFragment.value = null
+    }
 }
