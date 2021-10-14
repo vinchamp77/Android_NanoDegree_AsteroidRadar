@@ -1,26 +1,35 @@
 package com.udacity.asteroidradar.main
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.api.API_KEY
-import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.database.AsteroidDatabase
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-    private val _asteroids = MutableLiveData<List<Asteroid>>()
-    val asteroids : LiveData<List<Asteroid>>
-        get() = _asteroids
+class MainViewModel(app: Application) : AndroidViewModel(app) {
+
+    private val database = AsteroidDatabase.getInstance(app)
+    private val repository = AsteroidsRepository(database)
+    val asteroids = repository.asteroids
+
+    private val _navigateToDetailFragment = MutableLiveData<Asteroid?>()
+    val navigateToDetailFragment
+        get() = _navigateToDetailFragment
 
     private val mockData = false
+    private val _mockAsteroids = MutableLiveData<List<Asteroid>>()
+    val mockAsteroids : LiveData<List<Asteroid>>
+        get() = _mockAsteroids
 
     init {
         if(mockData) {
             mockData()
         } else {
-            getAsteroids()
+            refreshAsteroids()
         }
     }
 
@@ -46,12 +55,8 @@ class MainViewModel : ViewModel() {
             ++count
         }
 
-        _asteroids.postValue(dataList)
+        _mockAsteroids.postValue(dataList)
     }
-
-    private val _navigateToDetailFragment = MutableLiveData<Asteroid?>()
-    val navigateToDetailFragment
-        get() = _navigateToDetailFragment
 
     fun onAsteroidItemClick(data: Asteroid) {
         _navigateToDetailFragment.value = data
@@ -61,11 +66,10 @@ class MainViewModel : ViewModel() {
         _navigateToDetailFragment.value = null
     }
 
-    private fun getAsteroids() {
+    private fun refreshAsteroids() {
         viewModelScope.launch {
             try {
-                val result = AsteroidApi.getAsteroids(API_KEY)
-                _asteroids.postValue(result)
+                repository.refreshAsteroids()
 
             } catch (e: Exception) {
                 e.printStackTrace()
