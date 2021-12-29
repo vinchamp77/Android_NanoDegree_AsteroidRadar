@@ -3,7 +3,10 @@ package com.udacity.asteroidradar
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.squareup.picasso.Picasso
 
 
@@ -54,9 +57,16 @@ fun bindImagePictureOfDay(imageView: ImageView, data: PictureOfDay?) {
                 .load(it.url)
                 .into(imageView)
 
+            // Reference: use Glide works as well
+            /*
+            Glide.with(imageView.context)
+                .load(it.url)
+                .into(imageView)*/
+
             val strFormat = imageView.resources.getString(
                 R.string.nasa_picture_of_day_content_description_format)
             imageView.contentDescription = String.format(strFormat, it.title)
+
         }
     }
 }
