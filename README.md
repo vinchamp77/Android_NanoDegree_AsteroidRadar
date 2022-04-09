@@ -2,4 +2,4 @@ This project is part of the [Andrlid Kotlin Developer Nanodegree](https://vtsen.
 - [Course 2 Project: Build an Asteroid Radar](https://vtsen.hashnode.dev/android-kotlin-developer-nanodegree-projects-review#heading-course-2-project-build-an-asteroid-radar)
 
 ## Requirements
-- Android Studio Bumblebee
+- Android Studio Bumblebee or later
